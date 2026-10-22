@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Accordion: Elastic-Depth Inference via Fixed-Prefix Layer Looping</title>
+  <meta name="description" content="Accordion trains one mixture-of-experts Transformer that serves five inference budgets by repeating a fixed prefix of middle layers. Depth stays selectable from pretraining through SFT and RL.">
+  <meta property="og:title" content="Accordion: Elastic-Depth Inference via Fixed-Prefix Layer Looping">
+  <meta property="og:description" content="One set of weights, five inference depths. Fixed-prefix layer looping for a 6B-A0.5B MoE trained on 3.65T public tokens.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="static/images/teaser.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="static/images/accordion.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hero">
+  <div class="wrap">
+    <img class="logo" src="static/images/accordion.svg" alt="" width="72" height="72">
+    <h1><span class="name">Accordion</span>
+      <span class="subtitle">Elastic-Depth Inference via Fixed-Prefix Layer Looping</span></h1>
+
+    <p class="authors">
+      <span>Yudong Zhang<sup>2</sup></span>
+      <span>Wei Ding<sup>1,2</sup></span>
+      <span>Kaili Zheng<sup>1,2</sup></span>
+      <span>Zhenyu Zhang<sup>1</sup></span>
+      <span>Yuchen Ding<sup>1</sup></span>
+      <span>Yu Wang<sup>2</sup></span>
+    </p>
+    <p class="affils"><span><sup>1</sup>Baidu Inc.</span><span><sup>2</sup>Tsinghua University</span></p>
+    <p class="corr">Correspondence: <a href="mailto:zhangzhenyu07@baidu.com">zhangzhenyu07@baidu.com</a>, <a href="mailto:yu-wang@tsinghua.edu.cn">yu-wang@tsinghua.edu.cn</a></p>
+
+    <nav class="links" aria-label="Resources">
+      <!-- Replace each span.soon with an <a class="btn" href="..."> once the link exists. -->
+      <span class="btn soon" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6zM14 3.5V8h4.5zM8 12h8v1.6H8zm0 3.2h8v1.6H8zm0 3.2h5v1.6H8z"/></svg>
+        Paper <span class="tag">soon</span></span>
+      <span class="btn soon" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+        Code <span class="tag">soon</span></span>
+      <span class="btn soon" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-3.5 7a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm7 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM7 14h10a5 5 0 0 1-10 0z"/></svg>
+        Models <span class="tag">soon</span></span>
+      <a class="btn" href="#bibtex">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h4v4H9a2 2 0 0 0 2 2v2a4 4 0 0 1-4-4zm8 0h4v4h-2a2 2 0 0 0 2 2v2a4 4 0 0 1-4-4z"/></svg>
+        BibTeX</a>
+    </nav>
+
+    <figure class="teaser card">
+      <a href="static/images/teaser.png" target="_blank" rel="noopener"><img src="static/images/teaser.png" width="2100" height="612"
+           alt="Five accordions labeled Low, Medium, High, XHigh and Ultra, with 24, 27, 30, 33 and 36 layer executions; more of each bellows is gold as more layers execute twice."></a>
+    </figure>
+    <p class="tldr"><b>One set of weights, five inference depths.</b> Accordion repeats a fixed prefix of its middle layers to trade compute for quality at inference time, and keeps that choice available from pretraining through SFT and RL.</p>
+  </div>
+</header>
+
+<main id="main">
+<section class="alt" aria-labelledby="h-highlights">
+  <div class="wrap">
+    <h2 id="h-highlights">Highlights</h2>
+    <p class="lede">Accordion-6B-A0.5B: a 24-layer MoE with 6.03B total and 0.54B active parameters, pretrained on 3.65T publicly available tokens with a 32K context.</p>
+    <div class="stats">
+      <div class="stat"><div class="num">+2.65 pp</div><div class="label">37-task aggregate of Accordion-Base, deepest budget over the unlooped path</div></div>
+      <div class="stat"><div class="num">91%</div><div class="label">of that gain at the middle budget, with half as many additional layer executions</div></div>
+      <div class="stat"><div class="num">&le;0.003</div><div class="label">nats from budget-specific specialists at three evaluated budgets, equal training tokens</div></div>
+      <div class="stat"><div class="num">5 / 5</div><div class="label">Accordion-RL budgets outperform four evaluated public references on IFEval</div></div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-abstract">
+  <div class="wrap">
+    <h2 id="h-abstract">Abstract</h2>
+    <div class="abstract">
+      <p>Large language models serve applications with diverse inference budgets, but training and maintaining separate models for each budget incurs substantial costs. Recent Looped Transformers enable flexible inference computation through parameter reuse, but maintaining strong performance across different inference budgets remains an open challenge. We introduce Accordion, a mixture-of-experts-based model that supports five inference budgets through fixed-prefix layer looping. Each budget follows a pre-defined execution path, while the minimum budget retains the unlooped model. Joint pretraining samples one budget per micro-batch and optimizes its next-token prediction loss without additional cross-budget consistency objectives. We further preserve these inference budgets through supervised fine-tuning and reinforcement learning, where parameter-group merging and budget-matched multi-teacher on-policy distillation integrate three domain experts into one model. After 3.65T tokens of pretraining, increasing inference depth improves Accordion-6B-A0.5B's average performance across 37 tasks by 2.65 percentage points, with the middle budget capturing 91% of this gain using half as many additional layer executions. The final model surpasses each domain expert on its corresponding task-and-budget average, while achieving strong instruction-following performance across all budgets and retaining depth-dependent gains in mathematical reasoning and code generation.</p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" aria-labelledby="h-explorer">
+  <div class="wrap">
+    <h2 id="h-explorer">Pick a budget</h2>
+    <p class="lede">Budget <span class="math">k</span> runs the first <span class="math">k</span> layers of the middle window (layers 7&ndash;18) twice in place. Every other layer runs once, and <span class="math">k&nbsp;=&nbsp;0</span> is the ordinary unlooped model. The budget is fixed per request.</p>
+    <div class="explorer">
+      <div class="budget-tabs" role="group" aria-label="Inference budget" id="budget-tabs"></div>
+      <div class="path" id="path" aria-hidden="true"></div>
+      <div class="legend" aria-hidden="true">
+        <span><i></i>Layer executed once</span>
+        <span><i class="first"></i><i class="second"></i>Same layer executed twice</span>
+      </div>
+      <div class="readout" aria-live="polite">
+        <div><div class="v" id="r-exec">24</div><div class="d" id="d-exec"></div><div class="k">layer executions</div></div>
+        <div><div class="v" id="r-base">46.96</div><div class="d" id="d-base"></div><div class="k">Accordion-Base, 37-task overall (%)</div></div>
+        <div><div class="v" id="r-tpot">2.64</div><div class="d" id="d-tpot"></div><div class="k">time per output token (ms), 8K, batch 1</div></div>
+        <div><div class="v" id="r-aime">34.58</div><div class="d" id="d-aime"></div><div class="k">Accordion-RL, AIME 2024 (%)</div></div>
+      </div>
+      <p class="note">Deltas are relative to <span class="math">k&nbsp;=&nbsp;0</span>. Runtime measured on one H800 with Accordion-RL; quality evaluated separately.</p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-method">
+  <div class="wrap">
+    <h2 id="h-method">Method</h2>
+    <p class="lede">Layer looping, not whole-model recurrence: each selected layer repeats itself before handing off to the next, so every budget preserves the original layer order.</p>
+    <figure class="card">
+      <a href="static/images/method.png" target="_blank" rel="noopener"><img src="static/images/method.png" width="2100" height="1694" loading="lazy"
+           alt="Top: a table of five budgets, Low to Ultra, showing which of layers 7 to 18 run twice and the resulting 24 to 36 executions. Bottom left: layer 12 run twice with shared weights, where gates scale the second pass. Bottom right: training samples one budget per micro-batch; inference chooses one budget per request."></a>
+      <figcaption><b>Fixed budget paths with gated layer looping.</b> Both passes share attention, experts, normalization and the router. Zero-initialized per-channel gates scale the second pass before the residual addition, so it starts as an identity map. Training samples one budget per micro-batch; inference fixes one budget per request.</figcaption>
+    </figure>
+    <ul class="points">
+      <li><b>Fixed prefix paths</b>Budget <span class="math">k &isin; {0, 3, 6, 9, 12}</span> repeats layers 7 through 6&nbsp;+&nbsp;<span class="math">k</span>, giving 24 + <span class="math">k</span> layer executions. Paths are deterministic, not input-dependent.</li>
+      <li><b>Gated second pass</b>The second execution adds <span class="math">tanh(g) &odot; F(h)</span> for attention and MoE. Gates start at zero, so the unlooped model is recovered at initialization.</li>
+      <li><b>Single-trajectory training</b>Each micro-batch samples one budget and optimizes its next-token loss. No cross-budget consistency loss and no extra forward passes.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="alt" aria-labelledby="h-design">
+  <div class="wrap">
+    <h2 id="h-design">Why a fixed prefix</h2>
+    <p class="lede">Controlled experiments with 1.61B-parameter models and 80B training tokens.</p>
+    <div class="stack">
+      <figure class="card">
+        <a href="static/images/layer_selection.png" target="_blank" rel="noopener"><img src="static/images/layer_selection.png" width="1392" height="405" loading="lazy"
+             alt="Bar chart of validation loss for eight layer-selection strategies at k = 0, 3, 6, 9 and 12. The fixed prefix over layers 7 to 18 has the lowest loss at every looped budget."></a>
+        <figcaption><b>Eight layer-selection strategies.</b> The fixed prefix over layers 7&ndash;18 reaches the lowest observed validation loss at all four looped budgets.</figcaption>
+      </figure>
+      <figure class="card">
+        <a href="static/images/specialists.png" target="_blank" rel="noopener"><img src="static/images/specialists.png" width="1344" height="490" loading="lazy"
+             alt="Validation loss versus loop budget. With equal training tokens, Accordion stays close to budget-specific specialists and below two alternative training schemes; a second panel compares at equal training FLOPs."></a>
+        <figcaption><b>One model versus budget-specific specialists.</b> With equal training tokens, the shared model stays within 0.003 nats of specialists at the three evaluated budgets, including the unlooped path.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-pretrain">
+  <div class="wrap">
+    <h2 id="h-pretrain">Pretraining results</h2>
+    <p class="lede">Accordion-Base after 3.65T tokens and 32K context extension, compared with public models under one common evaluation protocol on 37 tasks.</p>
+    <figure class="card">
+      <a href="static/images/base_comparison.png" target="_blank" rel="noopener"><img src="static/images/base_comparison.png" width="1430" height="1055" loading="lazy"
+           alt="Six bar-chart panels, Overall plus five capability categories, comparing Accordion-Base at five budgets with Qwen3-0.6B, Qwen3-1.7B, OLMoE-1B-7B-0125 and Ouro-1.4B. Overall rises from 47.0 at k = 0 to 49.6 at k = 9."></a>
+      <figcaption><b>Overall and category scores.</b> Blue bars are Accordion-Base at <span class="math">k = 0, 3, 6, 9, 12</span>; gray bars are Qwen3-0.6B, Qwen3-1.7B, OLMoE-1B-7B-0125 and Ouro-1.4B. Additional depth improves 33 of 37 task scores. Panels use separate y-axis ranges.</figcaption>
+    </figure>
+    <h3>Quality versus inference cost</h3>
+    <figure class="card">
+      <a href="static/images/quality_latency.png" target="_blank" rel="noopener"><img src="static/images/quality_latency.png" width="1430" height="512" loading="lazy"
+           alt="Four panels: quality versus time per output token, time to first token, decode throughput and peak memory across loop budgets for 8K, 16K and 32K prompts at batch sizes 1 and 8."></a>
+      <figcaption><b>Six serving workloads on one H800.</b> The middle budget <span class="math">k = 6</span> reaches 49.37 on the 37-task aggregate, retaining 91% of the endpoint gain, while time per output token rises by roughly 21&ndash;24%.</figcaption>
+    </figure>
+    <h3>Longer contexts benefit more</h3>
+    <figure class="card">
+      <a href="static/images/long_context.png" target="_blank" rel="noopener"><img src="static/images/long_context.png" width="1276" height="443" loading="lazy"
+           alt="RULER scores across loop budgets at 4K, 8K, 16K and 32K context lengths; gains from added depth grow with context length."></a>
+      <figcaption><b>RULER across context lengths.</b> Going from <span class="math">k = 0</span> to <span class="math">k = 12</span> adds 0.72 points at 4K and 5.47 points at 32K.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="alt" aria-labelledby="h-post">
+  <div class="wrap">
+    <h2 id="h-post">Post-training results</h2>
+    <p class="lede">All five budgets survive SFT and RL. Domain-specific RL trains instruction-following, mathematics and coding experts; parameter-group merging and budget-matched multi-teacher on-policy distillation (MOPD) fold them into one model, Accordion-RL.</p>
+    <figure class="card">
+      <a href="static/images/post_comparison.png" target="_blank" rel="noopener"><img src="static/images/post_comparison.png" width="2090" height="1668" loading="lazy"
+           alt="Eight bar-chart panels comparing Accordion-RL at five budgets with Qwen3-0.6B, Qwen3-1.7B, OLMoE-1B-7B-0125-SFT and Ouro-1.4B-Thinking on IFEval, MMLU-Redux, GSM8K, MATH500, AIME 2024, AIME 2025, HumanEval+ and MBPP+. Accordion-RL scores 87.99 to 89.83 on IFEval versus at most 71.35 for the references."></a>
+      <figcaption><b>Accordion-RL against public post-trained models.</b> Selected benchmarks under one common protocol. Every budget scores 88&ndash;90 on IFEval, ahead of all four references; on AIME 2024 the score rises from 34.58 at <span class="math">k = 0</span> to 45.21 at <span class="math">k = 9</span>.</figcaption>
+    </figure>
+    <div class="stack">
+      <figure class="card">
+        <a href="static/images/rl_budget.png" target="_blank" rel="noopener"><img src="static/images/rl_budget.png" width="1430" height="648" loading="lazy"
+             alt="Ten line charts of score versus loop budget for Accordion-RL and Accordion-Instruct on instruction-following, knowledge, mathematics and code benchmarks."></a>
+        <figcaption><b>SFT and RL across budgets.</b> Additional depth keeps improving mathematical reasoning and code generation after RL, although the best budget varies by task.</figcaption>
+      </figure>
+      <figure class="card">
+        <a href="static/images/expert_integration.png" target="_blank" rel="noopener"><img src="static/images/expert_integration.png" width="1232" height="460" loading="lazy"
+             alt="Bar chart of gain over each domain expert for instruction following, code and mathematics. Accordion-RL gains +1.65, +2.04 and +1.37 points; merging without distillation loses 0.93 to 4.92 points on mathematics."></a>
+        <figcaption><b>One student beats each expert.</b> Averaged over tasks and budgets, Accordion-RL exceeds the instruction-following, code and mathematics experts by +1.65, +2.04 and +1.37 points. Error bars: paired bootstrap 95% intervals.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-bib" id="bibtex">
+  <div class="wrap">
+    <h2 id="h-bib">BibTeX</h2>
+    <div class="bib">
+      <button type="button" id="copy-bib">Copy</button>
+<pre id="bib-text"><code>@article{zhang2026accordion,
+  title   = {Accordion: Elastic-Depth Inference via Fixed-Prefix Layer Looping},
+  author  = {Zhang, Yudong and Ding, Wei and Zheng, Kaili and Zhang, Zhenyu and Ding, Yuchen and Wang, Yu},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</code></pre>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>The accordion icon is adapted from <a href="https://github.com/twitter/twemoji">Twemoji</a> by Twitter, Inc. and contributors, licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> (recolored).</p>
+  </div>
+</footer>
+<script src="static/js/main.js"></script>
+</body>
+</html>
