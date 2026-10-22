@@ -29,11 +29,11 @@
       <span>Yudong Zhang<sup>1</sup></span>
       <span>Wei Ding<sup>1</sup></span>
       <span>Kaili Zheng<sup>1</sup></span>
-      <span>Zhenyu Zhang<sup>2</sup></span>
       <span>Yuchen Ding<sup>2</sup></span>
+      <span>Zhenyu Zhang<sup>2,*</sup></span>
     </p>
     <p class="affils"><span><sup>1</sup>Tsinghua University</span><span><sup>2</sup>Baidu Inc.</span></p>
-    <p class="corr">Correspondence: <a href="mailto:zhangzhenyu07@baidu.com">zhangzhenyu07@baidu.com</a></p>
+    <p class="corr">* Corresponding author</p>
 
     <nav class="links" aria-label="Resources">
       <!-- Replace each span.soon with an <a class="btn" href="..."> once the link exists. -->
@@ -112,16 +112,16 @@
           <h3>Comparison with public models</h3>
           <p>Additional inference depth improves Accordion-Base performance across most evaluated tasks.</p>
         </figcaption>
-        <a class="chart-card" href="static/images/base_comparison.png" target="_blank" rel="noopener"><img src="static/images/base_comparison.png" width="1430" height="1055" loading="lazy"
-             alt="Six bar-chart panels, Overall plus five capability categories, comparing Accordion-Base at five budgets with Qwen3-0.6B, Qwen3-1.7B, OLMoE-1B-7B-0125 and Ouro-1.4B. Overall rises from 47.0 at k = 0 to 49.6 at k = 9."></a>
+        <a class="chart-card" href="static/images/base_comparison.png?v=9488d2d5" target="_blank" rel="noopener"><img src="static/images/base_comparison.png?v=9488d2d5" width="1430" height="1058" loading="lazy"
+             alt="Six bar-chart panels, Overall plus five capability categories, comparing Accordion-Base-8K at five budgets with Qwen3-0.6B, Qwen3-1.7B, OLMoE-1B-7B-0125 and Ouro-1.4B. Additional depth improves all five category averages."></a>
       </figure>
       <figure class="result">
         <figcaption>
           <h3>Quality versus inference cost</h3>
           <p>The middle budget captures most of the quality gains with a moderate increase in decoding latency.</p>
         </figcaption>
-        <a class="chart-card" href="static/images/quality_latency.png" target="_blank" rel="noopener"><img src="static/images/quality_latency.png" width="1430" height="512" loading="lazy"
-             alt="Four panels: quality versus time per output token, time to first token, decode throughput and peak memory across loop budgets for 8K, 16K and 32K prompts at batch sizes 1 and 8."></a>
+        <a class="chart-card" href="static/images/quality_latency.png?v=b5a7b29c" target="_blank" rel="noopener"><img src="static/images/quality_latency.png?v=b5a7b29c" width="1430" height="517" loading="lazy"
+             alt="Four panels pairing Accordion-Base-8K quality with separately measured Accordion-RL runtime: quality versus time per output token, time to first token, decode throughput and peak memory across loop budgets for 8K, 16K and 32K prompts at batch sizes 1 and 8."></a>
       </figure>
       <figure class="result">
         <figcaption>
@@ -166,7 +166,7 @@
       <button type="button" id="copy-bib">Copy</button>
 <pre id="bib-text"><code>@article{zhang2026accordion,
   title   = {Accordion: Elastic-Depth Inference via Fixed-Prefix Layer Looping},
-  author  = {Zhang, Yudong and Ding, Wei and Zheng, Kaili and Zhang, Zhenyu and Ding, Yuchen},
+  author  = {Zhang, Yudong and Ding, Wei and Zheng, Kaili and Ding, Yuchen and Zhang, Zhenyu},
   journal = {arXiv preprint},
   year    = {2026}
 }</code></pre>
